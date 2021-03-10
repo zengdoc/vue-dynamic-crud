@@ -1,0 +1,30 @@
+{
+  "defaultSeverity": "warning",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**"
+    ]
+  },
+  "rules": {
+    "member-access": false,
+    "indent": [true, "spaces", 2],
+    "interface-name": false,
+    "no-consecutive-blank-lines": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "quotemark": [true, "single"],
+    // 禁止使用console.log
+    "no-console": [true, "log"],
+    // 允许在箭头函数定义的单个参数周围不需要括号。
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    // 允许使用传统（非箭头）函数表达式。
+    "only-arrow-functions": [
+      false
+    ],
+    // 允许使用namespace。
+    "no-namespace": [true, "allow-declarations"]
+  }
+}

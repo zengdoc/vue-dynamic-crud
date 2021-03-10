@@ -1,0 +1,84 @@
+#! /usr/bin/env node
+
+const program = require('commander')
+const fs = require('fs')
+
+const {
+    logError,
+    logSuccess,
+    compile,
+    stringInsert,
+    firstUpperCase,
+} = require('./utils')
+
+program.parse(process.argv)
+
+const [
+    path,
+    name = firstUpperCase(path),
+] = program.args
+const className = firstUpperCase(path)
+
+const routerPath = '../src/router/index.ts'
+const routerTemplatePath = '../template/router/crud-router.hbs'
+const router = fs.readFileSync(routerPath).toString()
+const serviceRootPath = '../src/service'
+const servicePath = `${serviceRootPath}/${path}.ts`
+const serviceTemplatePath = '../template/service/service.ts.hbs'
+const pageRootPath = `../src/views/${className}`
+const pageTemplatePath = '../template/views'
+
+
+try {
+    console.log(`⚙️ 创建CRUD模块：${path} ...`)
+    validate()
+    // 生成router
+    renderRouter()
+    // 生成api
+    renderService()
+    // 生成page
+    renderPage()
+    logSuccess('创建成功');
+} catch (e) {
+    logError(`创建失败：${e}`)
+}
+
+function validate() {
+    if (!/^[a-zA-Z]*$/.test(path)) {
+        throw 'path 只能为英文字母'
+    } else if (new RegExp(`(['"])/${path}(['"])`).test(router)) {
+        throw 'Router 已存在'
+    } else if (fs.existsSync(servicePath)) {
+        throw 'Service 已存在'
+    } else if (fs.existsSync(pageRootPath)) {
+        throw 'Page 已存在'
+    }
+}
+
+
+function renderRouter() {
+    const regEnd = '\\$crud';
+    const matchReg = new RegExp(`.*//[\\s]*${regEnd}`)
+    let crudRouterIndex = router.search(matchReg)
+    if (crudRouterIndex > -1) {
+        const createCrudRouter = compile({ path, name, className }, routerTemplatePath)
+        const newRouter = stringInsert(router, createCrudRouter, crudRouterIndex);
+        fs.writeFileSync(routerPath, newRouter)
+    } else {
+        throw 'CRUD Router does not exist'
+    }
+}
+
+function renderService() {
+    const newService = compile({ path, name: className }, serviceTemplatePath)
+    fs.writeFileSync(servicePath, newService)
+}
+
+function renderPage() {
+    fs.mkdirSync(pageRootPath)
+    fs.copyFileSync(`${pageTemplatePath}/config.ts`, `${pageRootPath}/config.ts`)
+    const newPage = compile({ path, name: className }, `${pageTemplatePath}/index.vue.hbs`)
+    fs.writeFileSync(`${pageRootPath}/index.vue`, newPage)
+}
+
+

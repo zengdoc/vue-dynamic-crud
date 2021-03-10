@@ -1,0 +1,189 @@
+<template>
+    <div v-loading.fullscreen="loading">
+        <GTable
+                :searchConfig="table.searchConfig"
+                :data="table.data"
+                :config="table.config"
+                :total="table.total"
+                :pageSize="table.pageSize"
+                :pageNo="table.pageNo"
+                @search="onSearch"
+                @command="onCommand"
+                @current-page-change="onCurrentPageChange">
+        </GTable>
+        <GFormDialog
+                v-if="formDialog.visible"
+                :config="formDialog.config"
+                :data="formDialog.data"
+                @close="onCloseFormDialog"
+                @submit="onSubmitFormDialog"
+        ></GFormDialog>
+    </div>
+</template>
+
+<script lang="ts">
+    import { Component, Vue, Provide } from 'vue-property-decorator';
+
+    import {
+        TABLE_SEARCH_CONFIG,
+        TABLE_CONFIG,
+        FORM_DIALOG_CONFIG,
+    } from './config';
+    import {
+        getAccountApi,
+        createAccountApi,
+        updateAccountApi,
+        deleteAccountApi,
+    } from '@/service/account';
+    import { TOOLBAR_PROP } from '@/components/Table/config';
+    import { deepFreeze } from '@/utils';
+
+    @Component
+    export default class Account extends Vue {
+        searchParams: object = {};
+        command: string = '';
+
+        @Provide()
+        loading = false;
+        @Provide()
+        table: TableProvideType = {
+            config: deepFreeze(TABLE_CONFIG),
+            searchConfig: deepFreeze(TABLE_SEARCH_CONFIG),
+            data: [],
+            total: 0,
+            pageSize: 10,
+            pageNo: 1,
+        };
+        @Provide()
+        formDialog: FormDialogProvideType = {
+            visible: false,
+            config: deepFreeze(FORM_DIALOG_CONFIG),
+            data: {},
+        };
+
+        onSearch(searchParams) {
+            this.searchParams = searchParams;
+            this.onFetch();
+        }
+
+        onCommand({event, item}) {
+            this.command = event;
+            switch (event) {
+                case TOOLBAR_PROP.CREATE:
+                    this.onCreate();
+                    break;
+                case TOOLBAR_PROP.EDIT:
+                    this.onEdit(item);
+                    break;
+                case TOOLBAR_PROP.DELETE:
+                    this.onDelete(item);
+                    break;
+                case TOOLBAR_PROP.REFRESH:
+                    this.onFetch();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        onCurrentPageChange(pageNo) {
+            this.table.pageNo = pageNo;
+            this.onFetch();
+        }
+
+        async onFetch() {
+            const params = {
+                ...this.searchParams,
+                pageNo: this.table.pageNo,
+                pageSize: this.table.pageSize,
+            };
+            this.loading = true;
+            try {
+                const { data } = await getAccountApi(params);
+                const { rows, total, totalPages } = data;
+                if (totalPages !== 0 && totalPages < this.table.pageNo) {
+                    this.table.pageNo = totalPages;
+                    this.onFetch();
+                } else {
+                    this.table.data = _.isArray(rows) ? rows : [];
+                    this.table.total = total;
+                    this.loading = false;
+                }
+            } catch (e) {
+                this.table.data = [];
+                this.table.total = 0;
+                this.loading = false;
+            }
+        }
+
+        onCreate() {
+            this.onVisibleFormDialog();
+        }
+
+        onEdit(item) {
+            this.onVisibleFormDialog(item);
+        }
+
+        onDelete(item) {
+            const ids = _.isArray(item)
+                ? item.map(i => i.id)
+                : [item.id];
+            this.$confirm('请确认是否删除', '提示')
+                .then(() => {
+                    this.loading = true;
+                    deleteAccountApi(ids)
+                        .then(() => {
+                            this.$message.success('删除成功');
+                            this.onFetch();
+                        })
+                        .catch(() => {
+                            this.loading = false;
+                        });
+                })
+                .catch(() => {
+                    return null;
+                });
+        }
+
+        onVisibleFormDialog(item?) {
+            this.formDialog.visible = true;
+            if (item) {
+                this.formDialog.data = item;
+            }
+        }
+
+        onCloseFormDialog() {
+            this.formDialog.visible = false;
+            this.formDialog.data = {};
+        }
+
+        onSubmitFormDialog(item, originItem) {
+            if (this.command !== TOOLBAR_PROP.CREATE && this.command !== TOOLBAR_PROP.EDIT) {
+                return;
+            }
+            const api = this.command === TOOLBAR_PROP.CREATE
+                ? createAccountApi
+                : updateAccountApi;
+            const param = this.command === TOOLBAR_PROP.CREATE
+                ? item
+                : Object.assign({}, item, { id: originItem.id });
+            const tips = this.command === TOOLBAR_PROP.CREATE
+                ? '新增成功'
+                : '编辑成功';
+            this.loading = true;
+            api(param)
+                .then(() => {
+                    this.$message.success(tips);
+                    this.onFetch();
+                })
+                .catch(() => {
+                    this.loading = false;
+                });
+
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+
+</style>

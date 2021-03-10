@@ -1,0 +1,37 @@
+import request from './index';
+
+interface Get{{name}}Type {
+    pageNo: number;
+    pageSize: number;
+}
+export function get{{name}}Api(params: Get{{name}}Type) {
+    return request.get(
+        `/{{path}}`,
+        {
+            params,
+        },
+    );
+}
+
+export function create{{name}}Api(params: string[]) {
+    return request.post(
+        `/{{path}}`,
+        params,
+    );
+}
+
+export function update{{name}}Api(params: string[]) {
+    return request.put(
+        `/{{path}}`,
+        params,
+    );
+}
+
+export function delete{{name}}Api(ids: string[]) {
+    return request.delete(
+        `/{{path}}`,
+        {
+            params: ids,
+        },
+    );
+}
