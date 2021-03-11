@@ -3,6 +3,7 @@ const path = require('path');
 const environment = require('./build/environment');
 
 module.exports = {
+    publicPath: "",
     configureWebpack: {
         entry: {
             vendor: [
