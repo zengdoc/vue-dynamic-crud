@@ -131,11 +131,11 @@ cd ./bin
 |     **`prop`**     |      String      |                            字段名                            |
 |    **`label`**     |      String      |                            标签名                            |
 |    **`value`**     | String \| Number |                              值                              |
-|    **`type?`**     |      String      | 类型，参见[Element][https://element.eleme.cn/#/zh-CN/component/input] |
+|    **`type?`**     |      String      | 类型，参见[Element](https://element.eleme.cn/#/zh-CN/component/input) |
 |  **`maxLength?`**  |      Number      |                         最大输入长度                         |
 | **`placeholder?`** |      String      |                           占位文本                           |
 |   **`disable?`**   |     Boolean      |                             禁用                             |
-|    **`rules?`**    |      Object      | 验证规则，参见[Element][https://element.eleme.cn/#/zh-CN/component/form] |
+|    **`rules?`**    |      Object      | 验证规则，参见[Element](https://element.eleme.cn/#/zh-CN/component/form) |
 
 #### 选择框 GSelect
 
@@ -147,4 +147,4 @@ cd ./bin
 |   **`options`**    | {label: String, value: String} |                           下拉选项                           |
 | **`placeholder?`** |             String             |                           占位文本                           |
 |   **`disable?`**   |            Boolean             |                             禁用                             |
-|    **`rules?`**    |             Object             | 验证规则，参见[Element][https://element.eleme.cn/#/zh-CN/component/form] |
+|    **`rules?`**    |             Object             | 验证规则，参见[Element](https://element.eleme.cn/#/zh-CN/component/form) |
