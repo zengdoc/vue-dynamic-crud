@@ -1,150 +1,153 @@
 # vue-dynamic-crud
 
-> 支持灵活配置，快速搭建CRUD前端界面，彻底摆脱拧螺丝🔩。
+> The command line can generate CRUD code blocks, quickly build a CRUD front-end system, and support flexible configuration fields.
+
+![Demo](./demo/commander.gif)
+
+
+English | [简体中文](./README-zh.md)
 
 ---
 
-## 功能
+## Features
 
-- [x] CRUD功能模块。
-- [x] 支持可配置，动态渲染。
-- [x] 支持命令行快速生成代码块。
+- [x] CRUD module.
+- [x] Fields are configurable, dynamically rendered.
+- [x] Support command line to quickly generate code blocks.
 
-## 预览
+## Preview
 
 ![Demo](./demo/preview.png)
 
-[在线地址](https://zengdoc.github.io/vue-dynamic-crud)
+[Online](https://zengdoc.github.io/vue-dynamic-crud)
 
-## 启动项目
+## Startup
 
-### 安装依赖
+### Install
 
 ```bash
 npm install
 ```
 
-### 启动本地开发环境
+### Development
 
 ```bash
-npm run dev-[环境变量]
+npm run dev-[environment]
 eg: npm run dev-dev
 
-npm run mock    // mock模式
+npm run mock    // mock mode
 ```
 
-### 构建生产环境
+### Production
 
 ```bash
-npm run build-[环境变量]
+npm run build-[environment]
 eg: npm run build-dev
 ```
 
-## 命令行生成
+##  Command Line
 
 ```
 cd ./bin
-:bin $ node ./crud create [模块路径] [模块名]
+:bin $ node ./crud create [module path] [module name]
 ```
 
-![Demo](./demo/commander.gif)
 
 
+## Components
 
-## 组件
+#### Table GTable
 
-#### 表格 GTable
+##### Parameters
 
-##### 参数
+|        Field        |                   Type                    |          Description          |
+| :-----------------: | :---------------------------------------: | :---------------------------: |
+| **`searchConfig`**  | [SearchConfig[]](#Searchbar-SearchConfig) |    Searchbar configuration    |
+| **`toolbarConfig`** |    [Toolbar[]](#Toolbar-ToolbarConfig)    |     Toolbar configuration     |
+|    **`config`**     |         [Config[]](#Table-Config)         |      Table configuration      |
+|     **`data`**      |           {[key: string]: any}            |   Current page data source    |
+|     **`total`**     |                  Number                   |         Total number          |
+|   **`pageSize`**    |                  Number                   | Number of data items per page |
+|    **`pageNo`**     |                  Number                   |      Current page number      |
 
-|        字段         |                  类型                  |       描述       |
-| :-----------------: | :------------------------------------: | :--------------: |
-| **`searchConfig`**  | [SearchConfig[]](#搜索栏-SearchConfig) |    搜索栏配置    |
-| **`toolbarConfig`** |   [Toolbar[]](#工具栏-ToolbarConfig)   |    工具栏配置    |
-|    **`config`**     |        [Config[]](#表格-Config)        |     表格配置     |
-|     **`data`**      |          {[key: string]: any}          |   当前页数据源   |
-|     **`total`**     |                 Number                 |      总数目      |
-|   **`pageSize`**    |                 Number                 | 每页显示条目个数 |
-|    **`pageNo`**     |                 Number                 |     当前页数     |
+##### Event
 
-##### 事件
+|           Field           |            Type            |          Description           |
+| :-----------------------: | :------------------------: | :----------------------------: |
+|       **`search`**        |    {[key: string]: any}    |   Triggers when user search    |
+|       **`command`**       | {event: String, item: row} | Triggers when user use toolbar |
+| **`current-page-change`** |           Number           | Triggers when user change page |
 
-|           字段            |            参数            |          描述          |
+#### Form GFormDialog
+
+##### Parameters
+
+|    Field     |                     Type                     |    Description     |
+| :----------: | :------------------------------------------: | :----------------: |
+| **`config`** | [FormDialogConfig[]](#Form-FormDialogConfig) | Form configuration |
+|  **`data`**  |      {id?: String, [key: string]: any}       |  Form data source  |
+
+##### Event
+
+|           Field       |            Type            |          Description          |
 | :-----------------------: | :------------------------: | :--------------------: |
-|       **`search`**        |    {[key: string]: any}    |  当用户进行搜索时触发  |
-|       **`command`**       | {event: String, item: row} | 当用户操作工具栏时触发 |
-| **`current-page-change`** |           Number           |  当用户选择页数时触发  |
+|       **`close`**        | - |  Triggers when user close form  |
+|       **`submit`**       | result,oldItem | Triggers when user submit form |
 
-#### 表单 GFormDialog
+## Type
 
-##### 参数
+#### Searchbar SearchConfig
 
-|     字段     |                     类型                     |    描述    |
-| :----------: | :------------------------------------------: | :--------: |
-| **`config`** | [FormDialogConfig[]](#表单-FormDialogConfig) |  表单配置  |
-|  **`data`**  |      {id?: String, [key: string]: any}       | 表单数据源 |
+|   Field   |  Type  |                  Description                  |     Options      |
+| :-------: | :----: | :-------------------------------------------: | :--------------: |
+| component | String |                Child component                | GInput / GSelect |
+|    ……     |   ……   | [Child component type](#Child-Component-Type) |        ……        |
 
-##### 事件
+#### Toolbar ToolbarConfig
 
-|           字段            |            参数            |          描述          |
-| :-----------------------: | :------------------------: | :--------------------: |
-|       **`close`**        | - |  当用户关闭表单时触发  |
-|       **`submit`**       | result,oldItem | 当用户提交表单时触发 |
+| Field |  Type  |      Description      |                           Options                            |
+| :---: | :----: | :-------------------: | :----------------------------------------------------------: |
+|   -   | string | Toolbar configuration | CREATE / EDIT / DELETE / REFRESH<br/> / FULL_SCREEN / EXIT_FULL_SCREEN |
 
-## 类型
+#### Table Config
 
-#### 搜索栏 SearchConfig
+|     Field     |  Type  |      Description      |           Options           |
+| :-----------: | :----: | :-------------------: | :-------------------------: |
+|  **`prop`**   | String |      Field name       |              -              |
+|  **`label`**  | String | Label of this column  |              -              |
+| **`width?`**  | String | Width of this column  |              -              |
+| **`format?`** | String | Format of this column | dateTimeFormat / dateFormat |
 
-|   字段    |  类型  |           描述            |      可选值      |
-| :-------: | :----: | :-----------------------: | :--------------: |
-| component | String |          子组件           | GInput / GSelect |
-|    ……     |   ……   | [子组件类型](#子组件类型) |        ……        |
+#### Form FormDialogConfig
 
-#### 工具栏 ToolbarConfig
+|   Field   |  Type  |                  Description                  |     Options      |
+| :-------: | :----: | :-------------------------------------------: | :--------------: |
+| component | String |                Child component                | GInput / GSelect |
+|    ……     |   ……   | [Child component type](#Child Component Type) |        ……        |
 
-| 字段 |  类型  |    描述    |                            可选值                            |
-| :--: | :----: | :--------: | :----------------------------------------------------------: |
-|  -   | string | 工具栏配置 | CREATE / EDIT / DELETE / REFRESH<br/> / FULL_SCREEN / EXIT_FULL_SCREEN |
+## Child Component Type
 
-#### 表格 Config
+####  Input GInput
 
-|     字段      |  类型  |          描述          |           可选值            |
-| :-----------: | :----: | :--------------------: | :-------------------------: |
-|  **`prop`**   | String |         字段名         |              -              |
-|  **`label`**  | String |       表头标签名       |              -              |
-| **`width?`**  | String |         列宽度         |              -              |
-| **`format?`** | String | 格式化（过滤器filter） | dateTimeFormat / dateFormat |
-
-#### 表单 FormDialogConfig
-
-|   字段    |  类型  |           描述            |      可选值      |
-| :-------: | :----: | :-----------------------: | :--------------: |
-| component | String |          子组件           | GInput / GSelect |
-|    ……     |   ……   | [子组件类型](#子组件类型) |        ……        |
-
-## 子组件类型
-
-####  输入框 GInput
-
-|        字段        |       类型       |                             描述                             |
+|       Field        |       Type       |                         Description                          |
 | :----------------: | :--------------: | :----------------------------------------------------------: |
-|     **`prop`**     |      String      |                            字段名                            |
-|    **`label`**     |      String      |                            标签名                            |
-|    **`value`**     | String \| Number |                              值                              |
-|    **`type?`**     |      String      | 类型，参见[Element](https://element.eleme.cn/#/zh-CN/component/input) |
-|  **`maxLength?`**  |      Number      |                         最大输入长度                         |
-| **`placeholder?`** |      String      |                           占位文本                           |
-|   **`disable?`**   |     Boolean      |                             禁用                             |
-|    **`rules?`**    |      Object      | 验证规则，参见[Element](https://element.eleme.cn/#/zh-CN/component/form) |
+|     **`prop`**     |      String      |                          Field name                          |
+|    **`label`**     |      String      |                            Label                             |
+|    **`value`**     | String \| Number |                            Value                             |
+|    **`type?`**     |      String      | The type of input，see: [Element](https://element.eleme.cn/#/zh-CN/component/input) |
+|  **`maxLength?`**  |      Number      |                        The max length                        |
+| **`placeholder?`** |      String      |                   The placeholder of input                   |
+|   **`disable?`**   |     Boolean      |                Whether the input is disabled                 |
+|    **`rules?`**    |      Object      | Rules for field validation. see: [Element](https://ant.design/components/form) |
 
-#### 选择框 GSelect
+#### Select GSelect
 
-|        字段        |              类型              |                             描述                             |
+|       Field        |              Type              |                         Description                          |
 | :----------------: | :----------------------------: | :----------------------------------------------------------: |
-|     **`prop`**     |             String             |                            字段名                            |
-|    **`label`**     |             String             |                            标签名                            |
-|    **`value`**     |             String             |                              值                              |
-|   **`options`**    | {label: String, value: String} |                           下拉选项                           |
-| **`placeholder?`** |             String             |                           占位文本                           |
-|   **`disable?`**   |            Boolean             |                             禁用                             |
-|    **`rules?`**    |             Object             | 验证规则，参见[Element](https://element.eleme.cn/#/zh-CN/component/form) |
+|     **`prop`**     |             String             |                          Field name                          |
+|    **`label`**     |             String             |                            Label                             |
+|    **`value`**     |             String             |                            Value                             |
+|   **`options`**    | {label: String, value: String} |                       Select options.                        |
+| **`placeholder?`** |             String             |                  The placeholder of select                   |
+|   **`disable?`**   |            Boolean             |                Whether the select is disabled                |
+|    **`rules?`**    |             Object             | Rules for field validation. see: [Element](https://ant.design/components/form) |
